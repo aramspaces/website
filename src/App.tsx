@@ -663,16 +663,16 @@ const ListingDetailsPage = ({ listings, loading }: { listings: Listing[]; loadin
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <div className="py-6 md:py-8 border-y border-brand-sage/10 text-xs sm:text-sm font-medium text-brand-sage-dark uppercase tracking-[0.24em] sm:tracking-[0.3em] grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-16 mb-10 md:mb-12">
-            <div className="flex flex-col gap-1">
+          <div className="py-6 md:py-8 border-y border-brand-sage/10 text-xs sm:text-sm font-medium text-brand-sage-dark uppercase tracking-[0.24em] sm:tracking-[0.3em] flex flex-col gap-4 sm:grid sm:grid-cols-3 sm:gap-8 md:gap-16 mb-10 md:mb-12">
+            <div className="flex items-baseline gap-3 sm:flex-col sm:gap-1">
               <span className="text-brand-accent text-[10px]">CAPACITY</span>
               <span>{listing.details?.guests} Guests</span>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex items-baseline gap-3 sm:flex-col sm:gap-1">
               <span className="text-brand-accent text-[10px]">SLEEPING</span>
               <span>{listing.details?.bedrooms} Bedroom</span>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex items-baseline gap-3 sm:flex-col sm:gap-1">
               <span className="text-brand-accent text-[10px]">FACILITIES</span>
               <span>{listing.details?.baths} Bath</span>
             </div>
