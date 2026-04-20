@@ -7,6 +7,7 @@ import {
   Instagram,
   Key,
   MapPin,
+  Maximize2,
   Menu,
   ShieldCheck,
   Star,
@@ -645,6 +646,10 @@ const ListingDetailsPage = ({ listings, loading }: { listings: Listing[]; loadin
                   <motion.img key={activeIndex} src={gallery[activeIndex]} initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.8, ease: 'easeInOut' }} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </AnimatePresence>
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
+                <div className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/25 px-3 py-2 text-white shadow-[0_12px_28px_rgba(0,0,0,0.18)] backdrop-blur-xl transition-all duration-300 group-hover:bg-black/35">
+                  <Maximize2 size={16} />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Open</span>
+                </div>
               </div>
 
               {gallery.length > 1 && (
