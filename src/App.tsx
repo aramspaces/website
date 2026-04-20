@@ -33,6 +33,11 @@ const EMAIL_ADDRESS = 'aramspaces@gmail.com';
 const PHONE_DISPLAY = '+92 334 2777559';
 const PHONE_LINK = 'tel:+923342777559';
 const LOCATION_TEXT = 'Gulberg Greens, Islamabad';
+const GLASS_BUTTON_BASE =
+  'rounded-full border shadow-[0_16px_40px_rgba(26,26,26,0.12)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98]';
+const GLASS_BUTTON_DARK = `${GLASS_BUTTON_BASE} border-white/20 bg-white/12 text-white hover:bg-white/18`;
+const GLASS_BUTTON_LIGHT = `${GLASS_BUTTON_BASE} border-black/8 bg-white/58 text-brand-sage-dark hover:bg-white/72`;
+const GLASS_BUTTON_ACCENT = `${GLASS_BUTTON_BASE} border-white/20 bg-brand-accent/86 text-white hover:bg-brand-accent/95`;
 
 const WhatsAppIcon = ({ className = '' }: { className?: string }) => (
   <svg aria-hidden="true" viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -57,36 +62,38 @@ const Navbar = () => {
   }, [location.pathname]);
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled || !isHome ? 'py-3 md:py-4 bg-brand-beige shadow-sm text-brand-sage-dark' : 'py-4 md:py-8 bg-transparent text-white'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center gap-4">
-        <Link to="/" className="flex items-center min-w-0">
+    <nav className="fixed top-3 sm:top-4 md:top-6 w-full z-50 px-3 sm:px-4 md:px-6">
+      <div className={`max-w-7xl mx-auto rounded-full border transition-all duration-500 ${isScrolled || !isHome ? 'border-white/45 bg-brand-beige/65 text-brand-sage-dark shadow-[0_14px_40px_rgba(26,26,26,0.12)] backdrop-blur-xl' : 'border-white/25 bg-white/10 text-white shadow-[0_18px_50px_rgba(0,0,0,0.22)] backdrop-blur-xl'}`}>
+        <div className="px-4 sm:px-5 md:px-6 py-3 md:py-4 flex justify-between items-center gap-4">
+          <Link to="/" className="flex items-center min-w-0">
           <span className="text-lg sm:text-xl md:text-2xl font-serif font-bold tracking-tight inline-flex items-center shrink min-w-0">
             ARAM <span className="font-calligraphy font-semibold text-brand-accent ml-1 text-xl sm:text-2xl md:text-3xl leading-none">Spaces</span>
           </span>
-        </Link>
+          </Link>
 
-        <div className="hidden md:flex items-center gap-6 lg:gap-10">
-          {isHome ? (
-            ['Stays', 'Why Us', 'How it works', 'Contact'].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase().replace(/ /g, '-')}`}
-                className="text-sm font-medium hover:text-brand-accent transition-colors"
-              >
-                {item}
-              </a>
-            ))
-          ) : (
-            <>
-              <Link to="/" className="text-sm font-medium hover:text-brand-accent transition-colors">Home</Link>
-              <Link to="/listings" className="text-sm font-medium hover:text-brand-accent transition-colors">All Listings</Link>
-            </>
-          )}
+          <div className="hidden md:flex items-center gap-2 lg:gap-3">
+            {isHome ? (
+              ['Stays', 'Why Us', 'How it works', 'Contact'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase().replace(/ /g, '-')}`}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-brand-accent hover:bg-white/20 ${isScrolled || !isHome ? 'text-brand-sage-dark' : 'text-white'}`}
+                >
+                  {item}
+                </a>
+              ))
+            ) : (
+              <>
+                <Link to="/" className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-brand-accent hover:bg-white/20 ${isScrolled || !isHome ? 'text-brand-sage-dark' : 'text-white'}`}>Home</Link>
+                <Link to="/listings" className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-brand-accent hover:bg-white/20 ${isScrolled || !isHome ? 'text-brand-sage-dark' : 'text-white'}`}>All Listings</Link>
+              </>
+            )}
+          </div>
+
+          <button className={`md:hidden p-2.5 shrink-0 rounded-full border transition-all duration-300 ${isScrolled || !isHome ? 'border-black/10 bg-white/55 text-brand-sage-dark' : 'border-white/15 bg-white/10 text-white'}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            {isMobileMenuOpen ? <X /> : <Menu />}
+          </button>
         </div>
-
-        <button className="md:hidden p-2 shrink-0" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? <X /> : <Menu />}
-        </button>
       </div>
 
       <AnimatePresence>
@@ -95,18 +102,18 @@ const Navbar = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 w-full bg-brand-beige text-brand-sage-dark py-6 px-4 sm:px-6 md:hidden flex flex-col gap-5 shadow-lg border-t border-black/5"
+            className="max-w-7xl mx-auto mt-3 rounded-[28px] border border-white/30 bg-brand-beige/85 text-brand-sage-dark py-6 px-5 sm:px-6 md:hidden flex flex-col gap-3 shadow-[0_18px_50px_rgba(0,0,0,0.18)] backdrop-blur-xl"
           >
             {isHome ? (
               ['Stays', 'Why Us', 'How it works', 'Contact'].map((item) => (
-                <a key={item} href={`#${item.toLowerCase().replace(/ /g, '-')}`} className="text-xl font-serif" onClick={() => setIsMobileMenuOpen(false)}>
+                <a key={item} href={`#${item.toLowerCase().replace(/ /g, '-')}`} className="rounded-2xl px-4 py-3 text-lg font-serif hover:bg-white/60 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                   {item}
                 </a>
               ))
             ) : (
               <>
-                <Link to="/" className="text-xl font-serif" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-                <Link to="/listings" className="text-xl font-serif" onClick={() => setIsMobileMenuOpen(false)}>All Listings</Link>
+                <Link to="/" className="rounded-2xl px-4 py-3 text-lg font-serif hover:bg-white/60 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+                <Link to="/listings" className="rounded-2xl px-4 py-3 text-lg font-serif hover:bg-white/60 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>All Listings</Link>
               </>
             )}
           </motion.div>
@@ -133,7 +140,7 @@ const Hero = () => {
   }, [images.length]);
 
   return (
-    <section className="relative min-h-[100svh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-0">
+    <section className="relative min-h-[calc(100svh-84px)] sm:min-h-[82svh] md:min-h-[100svh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-0">
       <div className="absolute inset-0 z-0 bg-black">
         <AnimatePresence mode="wait">
           <motion.img
@@ -151,26 +158,26 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-brand-beige/30" />
       </div>
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 pt-28 sm:pt-32 md:pt-24 pb-24 md:pb-16 text-center text-white">
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 pt-22 sm:pt-28 md:pt-24 pb-12 sm:pb-20 md:pb-16 text-center text-white">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-          <span className="text-[10px] sm:text-xs uppercase tracking-[0.35em] sm:tracking-[0.5em] font-bold text-white mb-4 md:mb-6 block drop-shadow-sm">A NEW WAY TO STAY</span>
-          <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl mb-5 md:mb-8 leading-[0.95] drop-shadow-md text-white text-balance">
+          <span className="text-[10px] sm:text-xs uppercase tracking-[0.35em] sm:tracking-[0.5em] font-bold text-white mb-3 md:mb-6 block drop-shadow-sm">A NEW WAY TO STAY</span>
+          <h1 className="text-[2rem] sm:text-5xl md:text-7xl lg:text-8xl mb-3 md:mb-8 leading-[0.95] drop-shadow-md text-white text-balance">
             Find your <span className="italic font-light text-white">perfect</span> stay.
           </h1>
-          <p className="text-sm sm:text-base md:text-xl lg:text-2xl text-white mb-8 md:mb-12 max-w-3xl mx-auto font-sans font-light leading-relaxed drop-shadow-sm opacity-90 text-pretty">
+          <p className="text-sm sm:text-base md:text-xl lg:text-2xl text-white mb-5 md:mb-12 max-w-3xl mx-auto font-sans font-light leading-relaxed drop-shadow-sm opacity-90 text-pretty">
             Premium family suites in the heart of Islamabad. Comfort, style, and convenience with modern amenities and 24/7 support.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6">
             <button
               onClick={() => navigate('/listings')}
-              className="w-full sm:w-auto px-8 sm:px-10 md:px-12 py-4 md:py-5 bg-brand-accent text-white font-bold rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-xl uppercase tracking-[0.2em] md:tracking-widest text-xs sm:text-sm"
+            className={`${GLASS_BUTTON_ACCENT} w-full sm:w-auto px-8 sm:px-10 md:px-12 py-3 md:py-5 text-white font-bold uppercase tracking-[0.2em] md:tracking-widest text-xs sm:text-sm`}
             >
               Browse Apartments
             </button>
           </div>
         </motion.div>
 
-        <div className="absolute bottom-6 md:-bottom-24 left-1/2 -translate-x-1/2 flex gap-3">
+        <div className="absolute bottom-3 sm:bottom-6 md:-bottom-24 left-1/2 -translate-x-1/2 flex gap-3">
           {images.map((_, idx) => (
             <button
               key={idx}
@@ -236,10 +243,10 @@ const FeaturedStays = ({ listings }: { listings: Listing[] }) => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 md:gap-8">
             <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl leading-tight max-w-3xl">Quietly <span className="italic font-light">extraordinary</span> homes.</h2>
             <div className="flex items-center gap-4 self-end sm:self-auto sm:ml-auto">
-              <button onClick={() => scroll('left')} className="w-10 h-10 rounded-full border border-brand-sage/20 flex items-center justify-center hover:bg-brand-sage-dark hover:text-white transition-all text-brand-sage-dark">
+              <button onClick={() => scroll('left')} className={`${GLASS_BUTTON_LIGHT} w-10 h-10 flex items-center justify-center`}>
                 <ChevronLeft size={18} />
               </button>
-              <button onClick={() => scroll('right')} className="w-10 h-10 rounded-full border border-brand-sage/20 flex items-center justify-center hover:bg-brand-sage-dark hover:text-white transition-all text-brand-sage-dark">
+              <button onClick={() => scroll('right')} className={`${GLASS_BUTTON_LIGHT} w-10 h-10 flex items-center justify-center`}>
                 <ChevronRight size={18} />
               </button>
             </div>
@@ -262,7 +269,7 @@ const FeaturedStays = ({ listings }: { listings: Listing[] }) => {
               </div>
               <p className="text-gray-400 text-xs md:text-sm mb-1 md:mb-4 px-1 line-clamp-1">{item.location}</p>
               <div className="text-sm md:text-xl font-bold text-brand-sage-dark px-1">
-                Rs. {item.price}<span className="text-xs md:text-sm font-normal text-gray-400">/n</span>
+                PKR {item.price}<span className="text-xs md:text-sm font-normal text-gray-400">/n</span>
               </div>
             </Link>
           ))}
@@ -273,7 +280,7 @@ const FeaturedStays = ({ listings }: { listings: Listing[] }) => {
         )}
 
         <div className="flex justify-center">
-          <button onClick={() => navigate('/listings')} className="w-full sm:w-auto px-8 sm:px-12 py-4 border border-brand-sage/20 rounded-full text-brand-sage-dark text-xs sm:text-sm font-bold hover:bg-brand-sage-dark hover:text-white transition-all uppercase tracking-[0.2em] md:tracking-widest">
+          <button onClick={() => navigate('/listings')} className={`${GLASS_BUTTON_LIGHT} w-full sm:w-auto px-8 sm:px-12 py-4 text-xs sm:text-sm font-bold uppercase tracking-[0.2em] md:tracking-widest`}>
             View All Listings
           </button>
         </div>
@@ -298,10 +305,13 @@ const WhyUs = () => {
           <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl leading-tight max-w-5xl">Stays that feel like a <span className="italic font-light">welcome</span>, not a transaction.</h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-brand-sage-dark/20 overflow-hidden rounded-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 lg:gap-6">
           {steps.map((step, idx) => (
-            <div key={idx} className={`p-6 sm:p-8 md:p-10 lg:p-12 border-brand-sage-dark/20 flex flex-col items-start gap-4 md:gap-8 hover:bg-white transition-colors ${idx % 2 === 0 ? 'sm:border-r' : ''} ${idx < 2 ? 'sm:border-b' : 'max-sm:border-b'} lg:border-b-0 lg:border-r last:border-r-0`}>
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-brand-sage-dark rounded-full flex items-center justify-center text-white">
+            <div
+              key={idx}
+              className="p-6 sm:p-8 md:p-10 lg:p-10 rounded-[28px] border border-white/55 bg-white/45 backdrop-blur-xl shadow-[0_18px_45px_rgba(26,26,26,0.08)] flex flex-col items-start gap-4 md:gap-8 transition-all duration-300 hover:-translate-y-1 hover:bg-white/60 hover:shadow-[0_22px_55px_rgba(26,26,26,0.12)]"
+            >
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/50 bg-brand-sage-dark/88 backdrop-blur-xl flex items-center justify-center text-white shadow-[0_12px_28px_rgba(45,58,48,0.22)]">
                 <step.icon size={18} />
               </div>
               <div>
@@ -394,20 +404,23 @@ const ClientReviews = ({ reviews }: { reviews: ReviewItem[] }) => {
         <h2 className="text-2xl sm:text-4xl md:text-6xl leading-tight">Loved by travelers <span className="hidden md:inline"><br /></span>who notice details.</h2>
       </div>
 
-      <div ref={scrollRef} className="relative w-full overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing">
+      <div ref={scrollRef} className="relative w-full overflow-x-auto overflow-y-hidden scrollbar-hide cursor-grab active:cursor-grabbing [scrollbar-width:none] [-ms-overflow-style:none]">
         <div className="flex gap-4 md:gap-6 px-4 sm:px-6 w-max">
           {carouselReviews.map((review, idx) => (
-            <div key={`${review.id}-${idx}`} className="flex-none w-[280px] sm:w-[340px] md:w-[420px] lg:w-[450px] bg-white p-6 sm:p-8 md:p-12 shadow-sm border border-black/5 flex flex-col justify-between rounded-sm">
+            <div
+              key={`${review.id}-${idx}`}
+              className="flex-none w-[280px] sm:w-[340px] md:w-[420px] lg:w-[450px] rounded-[28px] border border-white/55 bg-white/42 p-6 sm:p-8 md:p-12 shadow-none backdrop-blur-xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:bg-white/56 hover:shadow-[0_14px_32px_rgba(26,26,26,0.06)]"
+            >
               <div>
-                <div className="flex items-center gap-2 mb-8 md:mb-10 text-brand-accent">
+                <div className="inline-flex items-center gap-2 mb-8 md:mb-10 rounded-full border border-white/60 bg-white/50 px-3 py-2 text-brand-accent shadow-[0_10px_28px_rgba(26,26,26,0.06)]">
                   <span className="text-sm md:text-base font-semibold">{review.rating}</span>
                   <Star size={14} className="fill-brand-accent" />
                 </div>
                 <p className="text-sm sm:text-base md:text-xl font-light text-brand-sage-dark leading-relaxed mb-8 md:mb-16 italic font-serif">"{review.review}"</p>
               </div>
-              <div className="pt-4 md:pt-8 border-t border-black/5">
+              <div className="pt-4 md:pt-8 border-t border-white/50">
                 <h4 className="text-sm md:text-base font-bold text-brand-sage-dark">{review.guestName}</h4>
-                <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">{review.stay}</p>
+                <p className="text-[10px] text-brand-sage/70 uppercase tracking-widest mt-1">{review.stay}</p>
               </div>
             </div>
           ))}
@@ -448,10 +461,10 @@ const Footer = () => {
           </div>
 
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-12 md:mb-16">
-            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-brand-accent hover:border-brand-accent transition-all duration-500 hover:scale-110">
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className={`${GLASS_BUTTON_DARK} w-12 h-12 flex items-center justify-center text-white/70 hover:text-brand-accent hover:border-brand-accent`}>
               <Instagram size={20} />
             </a>
-            <button className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-brand-accent hover:border-brand-accent transition-all duration-500 hover:scale-110">
+            <button className={`${GLASS_BUTTON_DARK} w-12 h-12 flex items-center justify-center text-white/70 hover:text-brand-accent hover:border-brand-accent`}>
               <Facebook size={20} />
             </button>
           </div>
@@ -536,8 +549,8 @@ const ListingsPage = ({
                   </div>
                   <p className="text-gray-400 text-xs md:text-sm mb-1 md:mb-4 px-1 line-clamp-1">{item.location}</p>
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center px-1 gap-1">
-                    <div className="text-sm md:text-xl font-bold text-brand-sage-dark">Rs. {item.price}<span className="text-xs md:text-sm font-normal text-gray-400">/n</span></div>
-                    <button className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-accent group-hover:gap-4 transition-all">
+                    <div className="text-sm md:text-xl font-bold text-brand-sage-dark">PKR {item.price}<span className="text-xs md:text-sm font-normal text-gray-400">/n</span></div>
+                    <button className={`${GLASS_BUTTON_LIGHT} hidden md:flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-widest text-brand-accent group-hover:gap-4`}>
                       View Details <ChevronRight size={14} />
                     </button>
                   </div>
@@ -598,7 +611,7 @@ const ListingDetailsPage = ({ listings, loading }: { listings: Listing[]; loadin
         {selectedImage && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-brand-sage-dark/95 flex items-center justify-center p-4 md:p-12 cursor-zoom-out" onClick={() => setSelectedImage(null)}>
             <motion.img initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} src={selectedImage} className="max-w-full max-h-full rounded-lg object-contain shadow-2xl" referrerPolicy="no-referrer" />
-            <button className="absolute top-8 right-8 text-white p-2 hover:bg-white/10 rounded-full transition-colors">
+            <button className={`${GLASS_BUTTON_DARK} absolute top-8 right-8 p-2.5`}>
               <X size={32} />
             </button>
           </motion.div>
@@ -618,7 +631,7 @@ const ListingDetailsPage = ({ listings, loading }: { listings: Listing[]; loadin
               </p>
             </div>
             <div className="text-left lg:text-right">
-              <div className="text-2xl md:text-4xl font-bold text-brand-sage-dark mb-1">Rs. {listing.price}</div>
+              <div className="text-2xl md:text-4xl font-bold text-brand-sage-dark mb-1">PKR {listing.price}</div>
               <div className="text-[10px] md:text-sm text-gray-400 uppercase tracking-widest">per night</div>
             </div>
           </div>
@@ -686,7 +699,7 @@ const ListingDetailsPage = ({ listings, loading }: { listings: Listing[]; loadin
           </div>
 
           <div className="mt-12 pt-8 border-t border-brand-sage/10 text-center">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 bg-brand-sage-dark text-white font-bold rounded-lg hover:bg-brand-sage transition-all shadow-xl uppercase tracking-[0.2em] md:tracking-widest text-xs sm:text-sm">
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={`${GLASS_BUTTON_LIGHT} inline-flex items-center justify-center w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 font-bold uppercase tracking-[0.2em] md:tracking-widest text-xs sm:text-sm`}>
               Inquire about dates
             </a>
           </div>
@@ -703,9 +716,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="relative min-h-screen bg-brand-beige">
-        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-[60] w-12 h-12 sm:w-14 sm:h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300 group">
+        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-[60] w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-white/20 bg-[#25D366]/78 text-white flex items-center justify-center shadow-[0_18px_45px_rgba(0,0,0,0.22)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#25D366]/88 group">
           <WhatsAppIcon className="w-6 h-6 sm:w-[30px] sm:h-[30px] group-hover:rotate-12 transition-transform" />
-          <span className="absolute right-full mr-4 px-4 py-2 bg-white text-brand-sage-dark text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm pointer-events-none hidden md:block">
+          <span className="absolute right-full mr-4 px-4 py-2 border border-white/30 bg-white/75 text-brand-sage-dark text-xs font-bold rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-sm backdrop-blur-xl pointer-events-none hidden md:block">
             Chat with us
           </span>
         </a>
