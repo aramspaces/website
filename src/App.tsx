@@ -14,7 +14,7 @@ import {
   X,
   Clock,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type TouchEvent } from 'react';
 import {
   BrowserRouter,
   Link,
@@ -39,6 +39,7 @@ const GLASS_BUTTON_BASE =
 const GLASS_BUTTON_DARK = `${GLASS_BUTTON_BASE} border-white/20 bg-white/12 text-white hover:bg-white/18`;
 const GLASS_BUTTON_LIGHT = `${GLASS_BUTTON_BASE} border-black/8 bg-white/58 text-brand-sage-dark hover:bg-white/72`;
 const GLASS_BUTTON_ACCENT = `${GLASS_BUTTON_BASE} border-white/20 bg-brand-accent/86 text-white hover:bg-brand-accent/95`;
+const GLASS_BUTTON_SAGE = `${GLASS_BUTTON_BASE} border-brand-sage-dark/12 bg-brand-sage-dark/78 text-brand-beige hover:bg-brand-sage-dark/88`;
 
 const WhatsAppIcon = ({ className = '' }: { className?: string }) => (
   <svg aria-hidden="true" viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -47,24 +48,54 @@ const WhatsAppIcon = ({ className = '' }: { className?: string }) => (
 );
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [navTheme, setNavTheme] = useState<'beige' | 'green'>('green');
   const location = useLocation();
   const isHome = location.pathname === '/';
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const resolveTheme = () => {
+      const probeY = Math.min(120, window.innerHeight - 1);
+      const probeX = Math.floor(window.innerWidth / 2);
+      const elementAtProbe = document.elementFromPoint(probeX, probeY);
+      const themedSection = elementAtProbe?.closest<HTMLElement>('[data-nav-theme]');
+      setNavTheme(themedSection?.dataset.navTheme === 'beige' ? 'beige' : 'green');
+    };
+
+    resolveTheme();
+    window.addEventListener('scroll', resolveTheme, { passive: true });
+    window.addEventListener('resize', resolveTheme);
+
+    return () => {
+      window.removeEventListener('scroll', resolveTheme);
+      window.removeEventListener('resize', resolveTheme);
+    };
+  }, [isHome, location.pathname]);
+
+  const navShellClass =
+    navTheme === 'beige'
+      ? 'border-white/18 bg-brand-beige/78 text-brand-sage-dark shadow-[0_14px_40px_rgba(26,26,26,0.12)] backdrop-blur-xl'
+      : 'border-brand-sage-dark/18 bg-brand-sage-dark/78 text-brand-beige shadow-[0_18px_50px_rgba(45,58,48,0.2)] backdrop-blur-xl';
+  const navLinkClass =
+    navTheme === 'beige'
+      ? 'text-brand-sage-dark hover:text-brand-accent hover:bg-white/24'
+      : 'text-brand-beige hover:text-white hover:bg-white/10';
+  const mobileToggleClass =
+    navTheme === 'beige'
+      ? 'border-black/10 bg-white/55 text-brand-sage-dark'
+      : 'border-white/12 bg-white/10 text-brand-beige';
+  const mobileMenuClass =
+    navTheme === 'beige'
+      ? 'border-white/30 bg-brand-beige/85 text-brand-sage-dark'
+      : 'border-brand-beige/15 bg-brand-sage-dark/88 text-brand-beige';
+
   return (
     <nav className="fixed top-3 sm:top-4 md:top-6 w-full z-50 px-3 sm:px-4 md:px-6">
-      <div className={`max-w-7xl mx-auto rounded-full border transition-all duration-500 ${isScrolled || !isHome ? 'border-white/45 bg-brand-beige/65 text-brand-sage-dark shadow-[0_14px_40px_rgba(26,26,26,0.12)] backdrop-blur-xl' : 'border-white/25 bg-white/10 text-white shadow-[0_18px_50px_rgba(0,0,0,0.22)] backdrop-blur-xl'}`}>
+      <div className={`max-w-7xl mx-auto rounded-full border transition-all duration-500 ${navShellClass}`}>
         <div className="px-4 sm:px-5 md:px-6 py-3 md:py-4 flex justify-between items-center gap-4">
           <Link to="/" className="flex items-center min-w-0">
           <span className="text-lg sm:text-xl md:text-2xl font-serif font-bold tracking-tight inline-flex items-center shrink min-w-0">
@@ -78,20 +109,20 @@ const Navbar = () => {
                 <a
                   key={item}
                   href={`#${item.toLowerCase().replace(/ /g, '-')}`}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-brand-accent hover:bg-white/20 ${isScrolled || !isHome ? 'text-brand-sage-dark' : 'text-white'}`}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${navLinkClass}`}
                 >
                   {item}
                 </a>
               ))
             ) : (
               <>
-                <Link to="/" className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-brand-accent hover:bg-white/20 ${isScrolled || !isHome ? 'text-brand-sage-dark' : 'text-white'}`}>Home</Link>
-                <Link to="/listings" className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-brand-accent hover:bg-white/20 ${isScrolled || !isHome ? 'text-brand-sage-dark' : 'text-white'}`}>All Listings</Link>
+                <Link to="/" className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${navLinkClass}`}>Home</Link>
+                <Link to="/listings" className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${navLinkClass}`}>All Listings</Link>
               </>
             )}
           </div>
 
-          <button className={`md:hidden p-2.5 shrink-0 rounded-full border transition-all duration-300 ${isScrolled || !isHome ? 'border-black/10 bg-white/55 text-brand-sage-dark' : 'border-white/15 bg-white/10 text-white'}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          <button className={`md:hidden p-2.5 shrink-0 rounded-full border transition-all duration-300 ${mobileToggleClass}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
@@ -103,18 +134,18 @@ const Navbar = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="max-w-7xl mx-auto mt-3 rounded-[28px] border border-white/30 bg-brand-beige/85 text-brand-sage-dark py-6 px-5 sm:px-6 md:hidden flex flex-col gap-3 shadow-[0_18px_50px_rgba(0,0,0,0.18)] backdrop-blur-xl"
+            className={`max-w-7xl mx-auto mt-3 rounded-[28px] border py-6 px-5 sm:px-6 md:hidden flex flex-col gap-3 shadow-[0_18px_50px_rgba(0,0,0,0.18)] backdrop-blur-xl ${mobileMenuClass}`}
           >
             {isHome ? (
               ['Stays', 'Why Us', 'How it works', 'Contact'].map((item) => (
-                <a key={item} href={`#${item.toLowerCase().replace(/ /g, '-')}`} className="rounded-2xl px-4 py-3 text-lg font-serif hover:bg-white/60 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                <a key={item} href={`#${item.toLowerCase().replace(/ /g, '-')}`} className="rounded-2xl px-4 py-3 text-lg font-serif hover:bg-white/10 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                   {item}
                 </a>
               ))
             ) : (
               <>
-                <Link to="/" className="rounded-2xl px-4 py-3 text-lg font-serif hover:bg-white/60 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-                <Link to="/listings" className="rounded-2xl px-4 py-3 text-lg font-serif hover:bg-white/60 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>All Listings</Link>
+                <Link to="/" className="rounded-2xl px-4 py-3 text-lg font-serif hover:bg-white/10 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+                <Link to="/listings" className="rounded-2xl px-4 py-3 text-lg font-serif hover:bg-white/10 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>All Listings</Link>
               </>
             )}
           </motion.div>
@@ -141,7 +172,7 @@ const Hero = () => {
   }, [images.length]);
 
   return (
-    <section className="relative min-h-[calc(100svh-84px)] sm:min-h-[82svh] md:min-h-[100svh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-0">
+    <section data-nav-theme="beige" className="relative min-h-[calc(100svh-84px)] sm:min-h-[82svh] md:min-h-[100svh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-0">
       <div className="absolute inset-0 z-0 bg-black">
         <AnimatePresence mode="wait">
           <motion.img
@@ -204,7 +235,7 @@ const TrustBar = () => {
   ];
 
   return (
-    <div className="bg-brand-beige py-5 md:py-12 border-b border-black/5">
+    <div data-nav-theme="green" className="bg-brand-beige py-5 md:py-12 border-b border-black/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-6 md:gap-24 text-center">
           <span className="text-[8px] md:text-[10px] uppercase tracking-[0.35em] md:tracking-[0.4em] font-bold text-brand-accent block">Find us on</span>
@@ -237,7 +268,7 @@ const FeaturedStays = ({ listings }: { listings: Listing[] }) => {
   };
 
   return (
-    <section id="stays" className="pt-16 md:pt-24 pb-10 md:pb-8 bg-brand-beige">
+    <section id="stays" data-nav-theme="green" className="pt-16 md:pt-24 pb-10 md:pb-8 bg-brand-beige">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-8 md:mb-20">
           <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-brand-accent mb-3 md:mb-6 block">FEATURED STAYS</span>
@@ -299,7 +330,7 @@ const WhyUs = () => {
   ];
 
   return (
-    <section id="why-us" className="pt-6 pb-16 md:pb-24 bg-brand-beige border-t border-black/5">
+    <section id="why-us" data-nav-theme="green" className="pt-6 pb-16 md:pb-24 bg-brand-beige border-t border-black/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-8 md:mb-20">
           <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-brand-accent mb-3 md:mb-6 block uppercase">WHY ARAM SPACES</span>
@@ -335,7 +366,7 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-16 md:py-24 lg:py-32 bg-brand-sage-dark text-white overflow-hidden relative">
+    <section id="how-it-works" data-nav-theme="beige" className="py-16 md:py-24 lg:py-32 bg-brand-sage-dark text-white overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="mb-12 md:mb-20">
           <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-brand-accent mb-4 block">HOW IT WORKS</span>
@@ -399,7 +430,7 @@ const ClientReviews = ({ reviews }: { reviews: ReviewItem[] }) => {
   const carouselReviews = reviews.length > 1 ? [...reviews, ...reviews] : reviews;
 
   return (
-    <section className="py-16 md:py-24 bg-brand-beige overflow-hidden">
+    <section data-nav-theme="green" className="py-16 md:py-24 bg-brand-beige overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10 md:mb-12">
         <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-brand-accent mb-4 md:mb-6 block">GUESTS</span>
         <h2 className="text-2xl sm:text-4xl md:text-6xl leading-tight">Loved by travelers <span className="hidden md:inline"><br /></span>who notice details.</h2>
@@ -433,7 +464,7 @@ const ClientReviews = ({ reviews }: { reviews: ReviewItem[] }) => {
 
 const Footer = () => {
   return (
-    <footer id="contact" className="bg-brand-sage-dark text-white py-16 md:py-20">
+    <footer id="contact" data-nav-theme="beige" className="bg-brand-sage-dark text-white py-16 md:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           <div className="mb-8 md:mb-10">
@@ -516,7 +547,7 @@ const ListingsPage = ({
   }, []);
 
   return (
-    <div className="pt-24 sm:pt-28 md:pt-32 pb-16 md:pb-24 bg-brand-beige min-h-screen">
+    <div data-nav-theme="green" className="pt-24 sm:pt-28 md:pt-32 pb-16 md:pb-24 bg-brand-beige min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-12 md:mb-20">
           <Link to="/" className="inline-flex items-center gap-2 text-brand-accent font-bold text-[10px] md:text-xs uppercase tracking-widest mb-6 md:mb-8 hover:translate-x-[-4px] transition-transform">
@@ -551,9 +582,9 @@ const ListingsPage = ({
                   <p className="text-gray-400 text-xs md:text-sm mb-1 md:mb-4 px-1 line-clamp-1">{item.location}</p>
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center px-1 gap-1">
                     <div className="text-sm md:text-xl font-bold text-brand-sage-dark">PKR {item.price}<span className="text-xs md:text-sm font-normal text-gray-400">/n</span></div>
-                    <button className={`${GLASS_BUTTON_LIGHT} hidden md:flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-widest text-brand-accent group-hover:gap-4`}>
-                      View Details <ChevronRight size={14} />
-                    </button>
+                    <span className="inline-flex items-center gap-1 text-[11px] md:text-xs font-bold uppercase tracking-[0.22em] text-brand-sage-dark/75 transition-all duration-300 group-hover:gap-2 group-hover:text-brand-accent">
+                      Details <ChevronRight size={13} />
+                    </span>
                   </div>
                 </Link>
               </motion.div>
@@ -568,28 +599,87 @@ const ListingsPage = ({
 const ListingDetailsPage = ({ listings, loading }: { listings: Listing[]; loading: boolean }) => {
   const { id } = useParams();
   const listing = listings.find((item) => String(item.id) === String(id));
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartXRef = useRef<number | null>(null);
+  const skipNextImageClickRef = useRef(false);
   const gallery = listing ? (listing.gallery.length > 0 ? listing.gallery : listing.image ? [listing.image] : []) : [];
+  const activeImage = gallery[activeIndex] ?? null;
+
+  const showPreviousImage = () => {
+    if (gallery.length <= 1) {
+      return;
+    }
+
+    setActiveIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
+  };
+
+  const showNextImage = () => {
+    if (gallery.length <= 1) {
+      return;
+    }
+
+    setActiveIndex((prev) => (prev + 1) % gallery.length);
+  };
+
+  const handleGallerySwipeStart = (event: TouchEvent<HTMLDivElement>) => {
+    touchStartXRef.current = event.touches[0]?.clientX ?? null;
+  };
+
+  const handleGallerySwipeEnd = (event: TouchEvent<HTMLDivElement>) => {
+    if (touchStartXRef.current === null || gallery.length <= 1) {
+      touchStartXRef.current = null;
+      return;
+    }
+
+    const endX = event.changedTouches[0]?.clientX;
+    const swipeDistance = touchStartXRef.current - (endX ?? touchStartXRef.current);
+    touchStartXRef.current = null;
+
+    if (Math.abs(swipeDistance) < 50) {
+      return;
+    }
+
+    skipNextImageClickRef.current = true;
+
+    if (swipeDistance > 0) {
+      showNextImage();
+      return;
+    }
+
+    showPreviousImage();
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    if (gallery.length <= 1) {
+    setActiveIndex(0);
+  }, [id]);
+
+  useEffect(() => {
+    if (!isLightboxOpen || gallery.length <= 1) {
       return;
     }
 
-    const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % gallery.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [gallery.length]);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        showPreviousImage();
+      }
 
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [id]);
+      if (event.key === 'ArrowRight') {
+        showNextImage();
+      }
+
+      if (event.key === 'Escape') {
+        setIsLightboxOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [gallery.length, isLightboxOpen]);
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center bg-brand-beige px-4 text-center text-gray-500">Loading listing details...</div>;
@@ -607,14 +697,71 @@ const ListingDetailsPage = ({ listings, loading }: { listings: Listing[]; loadin
   }
 
   return (
-    <div className="pt-24 sm:pt-28 md:pt-32 pb-12 bg-brand-beige min-h-screen">
+    <div data-nav-theme="green" className="pt-24 sm:pt-28 md:pt-32 pb-12 bg-brand-beige min-h-screen">
       <AnimatePresence>
-        {selectedImage && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-brand-sage-dark/95 flex items-center justify-center p-4 md:p-12 cursor-zoom-out" onClick={() => setSelectedImage(null)}>
-            <motion.img initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} src={selectedImage} className="max-w-full max-h-full rounded-lg object-contain shadow-2xl" referrerPolicy="no-referrer" />
-            <button className={`${GLASS_BUTTON_DARK} absolute top-8 right-8 p-2.5`}>
+        {isLightboxOpen && activeImage && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-brand-sage-dark/95 flex items-center justify-center p-4 md:p-12" onClick={() => setIsLightboxOpen(false)}>
+            {gallery.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className={`${GLASS_BUTTON_DARK} absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-2.5 z-10`}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    showPreviousImage();
+                  }}
+                  aria-label="Show previous image"
+                >
+                  <ChevronLeft size={26} />
+                </button>
+                <button
+                  type="button"
+                  className={`${GLASS_BUTTON_DARK} absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-2.5 z-10`}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    showNextImage();
+                  }}
+                  aria-label="Show next image"
+                >
+                  <ChevronRight size={26} />
+                </button>
+              </>
+            )}
+
+            <div
+              className="relative flex items-center justify-center w-full h-full"
+              onClick={(event) => event.stopPropagation()}
+              onTouchStart={handleGallerySwipeStart}
+              onTouchEnd={handleGallerySwipeEnd}
+            >
+              <motion.img
+                key={`lightbox-${activeIndex}`}
+                initial={{ scale: 0.94, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.98, opacity: 0 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                src={activeImage}
+                className="max-w-full max-h-full rounded-lg object-contain shadow-2xl"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+
+            <button
+              type="button"
+              className={`${GLASS_BUTTON_DARK} absolute top-8 right-8 p-2.5`}
+              onClick={(event) => {
+                event.stopPropagation();
+                setIsLightboxOpen(false);
+              }}
+              aria-label="Close image viewer"
+            >
               <X size={32} />
             </button>
+            {gallery.length > 1 && (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.25em] text-white/80 backdrop-blur-xl">
+                {activeIndex + 1} / {gallery.length}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -641,12 +788,59 @@ const ListingDetailsPage = ({ listings, loading }: { listings: Listing[]; loadin
         <div className="mb-14 md:mb-20">
           {gallery.length > 0 ? (
             <>
-              <div className="relative aspect-[4/3] sm:aspect-[16/10] md:aspect-[21/9] rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-6 bg-gray-100 shadow-sm cursor-zoom-in group" onClick={() => setSelectedImage(gallery[activeIndex])}>
+              <div
+                className="relative aspect-[4/3] sm:aspect-[16/10] md:aspect-[21/9] rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-6 bg-gray-100 shadow-sm cursor-zoom-in group"
+                onClick={() => {
+                  if (skipNextImageClickRef.current) {
+                    skipNextImageClickRef.current = false;
+                    return;
+                  }
+
+                  setIsLightboxOpen(true);
+                }}
+                onTouchStart={handleGallerySwipeStart}
+                onTouchEnd={handleGallerySwipeEnd}
+              >
                 <AnimatePresence mode="wait">
-                  <motion.img key={activeIndex} src={gallery[activeIndex]} initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.8, ease: 'easeInOut' }} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <motion.img
+                    key={activeIndex}
+                    src={activeImage ?? undefined}
+                    initial={{ opacity: 0, scale: 1.04 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.35, ease: 'easeInOut' }}
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
                 </AnimatePresence>
-                <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
-                <div className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/25 px-3 py-2 text-white shadow-[0_12px_28px_rgba(0,0,0,0.18)] backdrop-blur-xl transition-all duration-300 group-hover:bg-black/35">
+                <div className="pointer-events-none absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
+                {gallery.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className={`${GLASS_BUTTON_DARK} absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 p-2.5 z-10`}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        showPreviousImage();
+                      }}
+                      aria-label="Show previous image"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`${GLASS_BUTTON_DARK} absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 p-2.5 z-10`}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        showNextImage();
+                      }}
+                      aria-label="Show next image"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </>
+                )}
+                <div className="pointer-events-none absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-black/25 px-3 py-2 text-white shadow-[0_12px_28px_rgba(0,0,0,0.18)] backdrop-blur-xl transition-all duration-300 group-hover:bg-black/35">
                   <Maximize2 size={16} />
                   <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Open</span>
                 </div>
@@ -655,7 +849,7 @@ const ListingDetailsPage = ({ listings, loading }: { listings: Listing[]; loadin
               {gallery.length > 1 && (
                 <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
                   {gallery.map((img, i) => (
-                    <button key={i} onClick={() => setActiveIndex(i)} className={`flex-shrink-0 w-24 sm:w-32 md:w-40 lg:w-48 aspect-[16/10] rounded-lg md:rounded-xl overflow-hidden transition-all duration-300 snap-center border-2 ${activeIndex === i ? 'border-brand-accent ring-4 ring-brand-accent/10 opacity-100' : 'border-transparent opacity-50 hover:opacity-100'}`}>
+                    <button key={i} type="button" onClick={() => setActiveIndex(i)} className={`flex-shrink-0 w-24 sm:w-32 md:w-40 lg:w-48 aspect-[16/10] rounded-lg md:rounded-xl overflow-hidden transition-all duration-300 snap-center border-2 ${activeIndex === i ? 'border-brand-accent ring-4 ring-brand-accent/10 opacity-100' : 'border-transparent opacity-50 hover:opacity-100'}`}>
                       <img src={img} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     </button>
                   ))}
@@ -704,7 +898,7 @@ const ListingDetailsPage = ({ listings, loading }: { listings: Listing[]; loadin
           </div>
 
           <div className="mt-12 pt-8 border-t border-brand-sage/10 text-center">
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={`${GLASS_BUTTON_LIGHT} inline-flex items-center justify-center w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 font-bold uppercase tracking-[0.2em] md:tracking-widest text-xs sm:text-sm`}>
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={`${GLASS_BUTTON_SAGE} inline-flex items-center justify-center w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 font-bold uppercase tracking-[0.2em] md:tracking-widest text-xs sm:text-sm`}>
               Inquire about dates
             </a>
           </div>
