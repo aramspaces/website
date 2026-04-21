@@ -502,7 +502,7 @@ const Footer = () => {
           </div>
 
           <div className="w-full pt-10 md:pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold text-center">© 2024 ARAM SPACES. ALL RIGHTS RESERVED.</p>
+            <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold text-center">© 2026 ARAM SPACES. ALL RIGHTS RESERVED.</p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-8">
               <a href="#" className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold hover:text-white transition-colors">Privacy Policy</a>
               <a href="#" className="text-[10px] text-white/30 uppercase tracking-[0.2em] font-bold hover:text-white transition-colors">Terms of Service</a>
